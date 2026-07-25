@@ -6,6 +6,10 @@ export type ChangelogEntry = {
 export const changelog: ChangelogEntry[] = [
   {
     date: '2026-07-25',
+    description: '모바일 화면에서 카테고리/인기 게시물 레이아웃이 깨지는 문제 수정 (좁은 화면에서는 세로로 쌓이게 반응형 처리)',
+  },
+  {
+    date: '2026-07-25',
     description: '글 상세 페이지 주소를 한글 slug 방식에서 숫자 ID 방식으로 변경 (한글 인코딩 문제로 인한 404 오류 방지)',
   },
   {

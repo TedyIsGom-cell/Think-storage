@@ -62,7 +62,7 @@ export default async function PostPage({
 
       <p className="text-xs text-gray-400 mt-6">{post.category}</p>
       <h1 className="text-3xl font-bold mt-1 mb-2">{post.title}</h1>
-      <div className="flex items-center gap-3 text-sm text-gray-500 mb-8">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-500 mb-8">
         <span>{formatDateTime(post.createdAt)}</span>
         <span className="text-gray-400">({daysSinceBase(post.createdAt)}일)</span>
         <span>·</span>

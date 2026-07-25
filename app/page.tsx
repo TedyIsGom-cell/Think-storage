@@ -70,7 +70,7 @@ export default async function Home() {
         <SearchBox />
       </div>
 
-      <div className="grid grid-cols-[160px_1fr] gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-6 md:gap-10">
         <aside>
           <h2 className="text-sm font-semibold text-gray-400 mb-3">카테고리</h2>
           <ul className="space-y-2 text-sm">
@@ -112,7 +112,7 @@ export default async function Home() {
           {popularPosts.length > 0 && (
             <div className="mb-14">
               <h2 className="text-sm font-semibold text-gray-400 mb-3">인기 게시물</h2>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {popularPosts.map((post, i) => (
                   <Link
                     key={post.id}
@@ -135,7 +135,7 @@ export default async function Home() {
                 <h2 className="text-xl font-semibold group-hover:underline">
                   {post.title}
                 </h2>
-                <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-500 mt-1">
                   <span>{formatDateTime(post.createdAt)}</span>
                   <span className="text-gray-400">({daysSinceBase(post.createdAt)}일)</span>
                   <span>·</span>
