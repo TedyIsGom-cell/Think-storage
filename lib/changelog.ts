@@ -6,6 +6,10 @@ export type ChangelogEntry = {
 export const changelog: ChangelogEntry[] = [
   {
     date: '2026-07-25',
+    description: '글 상세 페이지 주소를 한글 slug 방식에서 숫자 ID 방식으로 변경 (한글 인코딩 문제로 인한 404 오류 방지)',
+  },
+  {
+    date: '2026-07-25',
     description: '카테고리 관리에 하위 카테고리 기능 추가, 카테고리 안의 글을 체크박스로 골라 다른 카테고리로 한꺼번에 옮기는 기능 추가',
   },
   {

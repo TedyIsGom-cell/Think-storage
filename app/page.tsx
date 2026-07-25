@@ -116,7 +116,7 @@ export default async function Home() {
                 {popularPosts.map((post, i) => (
                   <Link
                     key={post.id}
-                    href={`/posts/${post.slug}`}
+                    href={`/posts/${post.id}`}
                     className="border rounded-lg p-3 hover:border-gray-400 transition"
                   >
                     <span className="text-xs text-gray-400">#{i + 1}</span>
@@ -130,7 +130,7 @@ export default async function Home() {
 
           <div className="space-y-8">
             {posts.map((post) => (
-              <Link key={post.id} href={`/posts/${post.slug}`} className="block group">
+              <Link key={post.id} href={`/posts/${post.id}`} className="block group">
                 <p className="text-xs text-gray-400">{post.category}</p>
                 <h2 className="text-xl font-semibold group-hover:underline">
                   {post.title}

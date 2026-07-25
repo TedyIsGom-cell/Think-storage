@@ -8,7 +8,6 @@ export default function EditPost({ params }: { params: { id: string } }) {
   const [category, setCategory] = useState('');
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [content, setContent] = useState('');
-  const [slug, setSlug] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -27,7 +26,6 @@ export default function EditPost({ params }: { params: { id: string } }) {
         setTitle(post.title || '');
         setCategory(post.category || '');
         setContent(post.content || '');
-        setSlug(post.slug || '');
         setLoading(false);
       });
   }, [params.id]);
@@ -46,7 +44,7 @@ export default function EditPost({ params }: { params: { id: string } }) {
     setSaving(false);
 
     if (res.ok) {
-      router.push(`/posts/${slug}`);
+      router.push(`/posts/${params.id}`);
     } else {
       setError('저장에 실패했습니다. 다시 시도해주세요.');
     }

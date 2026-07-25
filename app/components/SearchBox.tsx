@@ -48,10 +48,10 @@ export default function SearchBox({ initialQuery = '' }: { initialQuery?: string
           label: c.name,
           href: `/category/${encodeURIComponent(c.name)}`,
         })),
-        ...data.posts.map((p: { title: string; slug: string }) => ({
+        ...data.posts.map((p: { id: number; title: string }) => ({
           type: 'post' as const,
           label: p.title,
-          href: `/posts/${p.slug}`,
+          href: `/posts/${p.id}`,
         })),
       ];
       setSuggestions(combined);

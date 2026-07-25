@@ -15,7 +15,7 @@ export async function GET(req: Request) {
         published: true,
         title: { contains: q, mode: 'insensitive' },
       },
-      select: { title: true, slug: true },
+      select: { id: true, title: true },
       take: 5,
       orderBy: { createdAt: 'desc' },
     }),
