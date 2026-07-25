@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { prisma } from '@/lib/db';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
@@ -78,16 +79,32 @@ export default async function Home() {
                 전체 ({posts.length})
               </Link>
             </li>
-            {categories.map((cat) => (
-              <li key={cat.id}>
-                <Link
-                  href={`/category/${encodeURIComponent(cat.name)}`}
-                  className="text-gray-500 hover:text-gray-800 hover:underline"
-                >
-                  {cat.name} ({countMap.get(cat.name) || 0})
-                </Link>
-              </li>
-            ))}
+            {categories
+              .filter((cat) => !cat.parentId)
+              .map((cat) => (
+                <Fragment key={cat.id}>
+                  <li>
+                    <Link
+                      href={`/category/${encodeURIComponent(cat.name)}`}
+                      className="text-gray-500 hover:text-gray-800 hover:underline"
+                    >
+                      {cat.name} ({countMap.get(cat.name) || 0})
+                    </Link>
+                  </li>
+                  {categories
+                    .filter((child) => child.parentId === cat.id)
+                    .map((child) => (
+                      <li key={child.id} className="ml-3">
+                        <Link
+                          href={`/category/${encodeURIComponent(child.name)}`}
+                          className="text-gray-400 hover:text-gray-700 hover:underline"
+                        >
+                          ↳ {child.name} ({countMap.get(child.name) || 0})
+                        </Link>
+                      </li>
+                    ))}
+                </Fragment>
+              ))}
           </ul>
         </aside>
 

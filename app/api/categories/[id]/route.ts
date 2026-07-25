@@ -52,9 +52,19 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
   }
 
   const id = Number(params.id);
-  const current = await prisma.category.findUnique({ where: { id } });
+  const current = await prisma.category.findUnique({
+    where: { id },
+    include: { children: true },
+  });
   if (!current) {
     return NextResponse.json({ error: '카테고리를 찾을 수 없습니다.' }, { status: 404 });
+  }
+
+  if (current.children.length > 0) {
+    return NextResponse.json(
+      { error: '하위 카테고리가 있는 카테고리는 삭제할 수 없습니다. 먼저 하위 카테고리를 삭제하거나 옮겨주세요.' },
+      { status: 400 }
+    );
   }
 
   if (current.name === '일반') {

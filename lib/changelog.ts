@@ -6,6 +6,10 @@ export type ChangelogEntry = {
 export const changelog: ChangelogEntry[] = [
   {
     date: '2026-07-25',
+    description: '카테고리 관리에 하위 카테고리 기능 추가, 카테고리 안의 글을 체크박스로 골라 다른 카테고리로 한꺼번에 옮기는 기능 추가',
+  },
+  {
+    date: '2026-07-25',
     description: '글 올린 날짜 옆에 2007년 1월 21일 기준 날짜 수(예: 7126일)를 표시',
   },
   {

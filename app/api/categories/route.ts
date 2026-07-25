@@ -13,6 +13,7 @@ export async function GET() {
   const result = categories.map((c) => ({
     id: c.id,
     name: c.name,
+    parentId: c.parentId,
     postCount: countMap.get(c.name) || 0,
   }));
 
@@ -25,13 +26,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
   }
 
-  const { name } = await req.json();
+  const { name, parentId } = await req.json();
   if (!name?.trim()) {
     return NextResponse.json({ error: '카테고리 이름을 입력해주세요.' }, { status: 400 });
   }
 
   try {
-    const category = await prisma.category.create({ data: { name: name.trim() } });
+    const category = await prisma.category.create({
+      data: {
+        name: name.trim(),
+        parentId: parentId ? Number(parentId) : null,
+      },
+    });
     return NextResponse.json(category);
   } catch {
     return NextResponse.json({ error: '이미 존재하는 카테고리입니다.' }, { status: 400 });

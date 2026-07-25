@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
+import Link from 'next/link';
 
 type Category = {
   id: number;
   name: string;
+  parentId: number | null;
   postCount: number;
 };
 
@@ -83,13 +85,23 @@ export default function CategoryManager() {
     return <p className="text-sm text-gray-400">불러오는 중...</p>;
   }
 
+  const topLevel = categories.filter((c) => !c.parentId);
+  const childrenOf = (parentId: number) => categories.filter((c) => c.parentId === parentId);
+  const ordered: Category[] = [];
+  topLevel.forEach((c) => {
+    ordered.push(c);
+    childrenOf(c.id).forEach((child) => ordered.push(child));
+  });
+
   return (
     <div>
       <div className="space-y-2 mb-4">
-        {categories.map((cat) => (
+        {ordered.map((cat) => (
           <div
             key={cat.id}
-            className="flex items-center justify-between border rounded-lg px-3 py-2"
+            className={`flex items-center justify-between border rounded-lg px-3 py-2 ${
+              cat.parentId ? 'ml-6 bg-gray-50' : ''
+            }`}
           >
             {editingId === cat.id ? (
               <div className="flex items-center gap-2 flex-1">
@@ -114,9 +126,10 @@ export default function CategoryManager() {
               </div>
             ) : (
               <>
-                <span className="text-sm">
+                <Link href={`/admin/categories/${cat.id}`} className="text-sm hover:underline">
+                  {cat.parentId ? '↳ ' : ''}
                   {cat.name} <span className="text-gray-400">({cat.postCount})</span>
-                </span>
+                </Link>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => startEdit(cat)}
@@ -150,8 +163,9 @@ export default function CategoryManager() {
       </form>
       {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
       <p className="text-xs text-gray-400 mt-3">
-        "이름변경/옮기기"에 이미 있는 다른 카테고리 이름을 입력하면, 그 카테고리로 글이 전부
-        옮겨지고 지금 이 카테고리는 사라집니다.
+        카테고리 이름을 클릭하면 그 안의 글을 체크박스로 골라서 다른 카테고리로 옮기거나, 하위
+        카테고리를 만들 수 있어요. "이름변경/옮기기"에 이미 있는 다른 카테고리 이름을 입력하면,
+        그 카테고리로 글이 전부 옮겨지고 지금 이 카테고리는 사라집니다.
       </p>
     </div>
   );

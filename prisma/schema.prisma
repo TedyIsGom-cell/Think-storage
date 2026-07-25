@@ -8,9 +8,12 @@ datasource db {
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  parentId  Int?
+  parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryTree")
+  createdAt DateTime   @default(now())
 }
 
 model SiteStat {
