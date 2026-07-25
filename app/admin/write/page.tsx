@@ -1,15 +1,22 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function WritePost() {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [content, setContent] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then((res) => res.json())
+      .then((cats) => setCategoryOptions(cats.map((c: { name: string }) => c.name)));
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -46,7 +53,13 @@ export default function WritePost() {
           onChange={(e) => setCategory(e.target.value)}
           placeholder="카테고리 (예: 에세이, 소설 / 비워두면 '일반')"
           className="w-full border rounded px-3 py-2 text-sm"
+          list="category-options"
         />
+        <datalist id="category-options">
+          {categoryOptions.map((name) => (
+            <option key={name} value={name} />
+          ))}
+        </datalist>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}

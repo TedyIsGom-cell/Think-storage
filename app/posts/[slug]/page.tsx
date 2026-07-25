@@ -39,6 +39,12 @@ export default async function PostPage({
         {isAdmin && (
           <div className="flex items-center gap-4">
             <Link
+              href="/admin/dashboard"
+              className="text-sm text-gray-400 hover:text-gray-700"
+            >
+              관리자
+            </Link>
+            <Link
               href={`/admin/edit/${post.id}`}
               className="text-sm text-gray-400 hover:text-gray-700"
             >

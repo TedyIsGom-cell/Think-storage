@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db';
 import Link from 'next/link';
+import SearchBox from '../components/SearchBox';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,16 +30,9 @@ export default async function SearchPage({
         ← 홈으로
       </Link>
 
-      <form action="/search" className="mt-6 mb-8">
-        <input
-          type="text"
-          name="q"
-          defaultValue={q}
-          placeholder="글 검색하기..."
-          className="w-full border rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200"
-          autoFocus
-        />
-      </form>
+      <div className="mt-6 mb-8">
+        <SearchBox initialQuery={q} />
+      </div>
 
       <h1 className="text-lg font-semibold mb-6">
         {q ? `"${q}" 검색 결과 (${posts.length})` : '검색어를 입력해주세요'}

@@ -23,7 +23,7 @@ export default function AdminLogin() {
     setLoading(false);
 
     if (res.ok) {
-      router.push('/admin/write');
+      router.push('/admin/dashboard');
     } else {
       setError('비밀번호가 올바르지 않습니다.');
     }

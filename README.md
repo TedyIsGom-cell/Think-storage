@@ -10,17 +10,19 @@
 ## 기능
 - 조회수 / 좋아요 (좋아요는 브라우저 기준으로 중복 방지)
 - 댓글: 누구나 이름 + 비밀번호 + 내용으로 작성 가능. **수정/삭제는 관리자만** 가능
-  (관리자로 로그인한 상태에서 글 페이지에 들어가면 각 댓글에 "수정"/"삭제" 버튼이 보입니다)
 - 메인 화면 상단 "인기 게시물" 3칸 (조회수 기준)
-- 글 검색 (제목 + 본문 내용 검색, `/search?q=검색어`)
+- 글 검색 + **추천 검색어(자동완성)**: 글 제목 / 카테고리를 검색창 아래에 바로 추천해줘요
 - 게시물 수정 / 삭제 (관리자 전용, `/admin/edit/[글번호]`)
-- 카테고리: 글쓰기 화면에서 카테고리를 입력하면, 메인 화면 왼쪽에 카테고리별로 모아서 볼 수 있어요
-- 로그인 / 로그아웃 (우측 상단)
-- 업데이트 기록 페이지 (우측 상단 "업데이트 기록" 버튼)
+- 카테고리: 글쓰기 화면에서 입력, 메인 화면 왼쪽에 카테고리별 목록 표시
+- 카테고리 전체 글 텍스트 파일로 다운로드 (`/category/카테고리명`)
+- 로그인 / 로그아웃
+- **관리자 대시보드** (`/admin/dashboard`): 방문자 수 / 게시물 수 / 총 조회수 / 총 좋아요 / 총 댓글 수 통계,
+  카테고리 추가·이름변경(다른 카테고리로 옮기기/병합)·삭제 관리
+- 업데이트 기록 페이지
 - 글/댓글 작성 시각을 초 단위까지 표시
+- 브라우저 탭 제목: "이산의 블로그"
 
-> ⚠️ 이번 업데이트로 데이터베이스에 컬럼 2개가 추가되었어요. 아래 "데이터베이스에 반영하기" 섹션의
-> SQL을 실행해주셔야 정상 작동합니다.
+> ⚠️ 이번 업데이트로 테이블 2개(`Category`, `SiteStat`)가 추가되었어요. 아래 SQL을 실행해주셔야 합니다.
 
 ## 처음 실행하기까지 순서 (하나도 안 빠뜻하고 그대로 따라하시면 됩니다)
 
@@ -62,17 +64,34 @@ npx prisma db push          # 데이터베이스 테이블 생성
 npm run dev                 # http://localhost:3000 에서 확인
 ```
 
-> ⚠️ 데이터베이스 구조(prisma/schema.prisma)가 바뀌었습니다.
+> ⚠️ 데이터베이스에 새 테이블 2개를 추가해야 합니다.
 > Vercel **Storage → 데이터베이스 → Query** 탭 (또는 "Open in Neon" → SQL Editor)에서
 > 아래 SQL을 **하나씩 따로** 실행해주세요.
 
 ```sql
-ALTER TABLE "Post" ADD COLUMN category TEXT NOT NULL DEFAULT '일반';
+CREATE TABLE "Category" (
+  id SERIAL PRIMARY KEY,
+  name TEXT UNIQUE NOT NULL,
+  "createdAt" TIMESTAMP NOT NULL DEFAULT now()
+);
 ```
 
 ```sql
-ALTER TABLE "Comment" ADD COLUMN "updatedAt" TIMESTAMP NOT NULL DEFAULT now();
+CREATE TABLE "SiteStat" (
+  id INTEGER PRIMARY KEY,
+  "homeViews" INTEGER NOT NULL DEFAULT 0
+);
 ```
+
+```sql
+INSERT INTO "SiteStat" (id, "homeViews") VALUES (1, 0);
+```
+
+```sql
+INSERT INTO "Category" (name) SELECT DISTINCT category FROM "Post" ON CONFLICT (name) DO NOTHING;
+```
+
+(마지막 SQL은 지금까지 써두신 글들의 카테고리를 카테고리 관리 목록에 자동으로 등록해주는 명령이에요.)
 
 ## 나중에 더 해볼 수 있는 것들
 - 마크다운 문법 지원 (굵게, 기울임 등)

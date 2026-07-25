@@ -6,12 +6,19 @@ import { useRouter } from 'next/navigation';
 export default function EditPost({ params }: { params: { id: string } }) {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [content, setContent] = useState('');
   const [slug, setSlug] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then((res) => res.json())
+      .then((cats) => setCategoryOptions(cats.map((c: { name: string }) => c.name)));
+  }, []);
 
   useEffect(() => {
     fetch(`/api/posts/${params.id}`)
@@ -76,7 +83,13 @@ export default function EditPost({ params }: { params: { id: string } }) {
           onChange={(e) => setCategory(e.target.value)}
           placeholder="카테고리"
           className="w-full border rounded px-3 py-2 text-sm"
+          list="category-options"
         />
+        <datalist id="category-options">
+          {categoryOptions.map((name) => (
+            <option key={name} value={name} />
+          ))}
+        </datalist>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}

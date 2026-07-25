@@ -22,12 +22,21 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 
   const { title, content, category, published } = await req.json();
+
+  if (category !== undefined && category.trim()) {
+    await prisma.category.upsert({
+      where: { name: category.trim() },
+      update: {},
+      create: { name: category.trim() },
+    });
+  }
+
   const post = await prisma.post.update({
     where: { id: Number(params.id) },
     data: {
       ...(title !== undefined && { title }),
       ...(content !== undefined && { content }),
-      ...(category !== undefined && { category }),
+      ...(category !== undefined && { category: category.trim() }),
       ...(published !== undefined && { published }),
     },
   });

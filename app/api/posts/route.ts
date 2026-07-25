@@ -36,11 +36,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: '제목과 내용을 입력해주세요.' }, { status: 400 });
   }
 
+  const finalCategory = category?.trim() || '일반';
+
+  await prisma.category.upsert({
+    where: { name: finalCategory },
+    update: {},
+    create: { name: finalCategory },
+  });
+
   const post = await prisma.post.create({
     data: {
       title,
       content,
-      category: category?.trim() || '일반',
+      category: finalCategory,
       slug: makeSlug(title),
     },
   });

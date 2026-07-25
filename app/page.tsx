@@ -4,11 +4,12 @@ import { cookies } from 'next/headers';
 import { isValidSession } from '@/lib/auth';
 import { formatDateTime } from '@/lib/format';
 import LogoutButton from './components/LogoutButton';
+import SearchBox from './components/SearchBox';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const [posts, popularPosts, categoryRows] = await Promise.all([
+  const [posts, popularPosts, categories, categoryCounts] = await Promise.all([
     prisma.post.findMany({
       where: { published: true },
       orderBy: { createdAt: 'desc' },
@@ -18,13 +19,22 @@ export default async function Home() {
       orderBy: { viewCount: 'desc' },
       take: 3,
     }),
+    prisma.category.findMany({ orderBy: { name: 'asc' } }),
     prisma.post.groupBy({
       by: ['category'],
       where: { published: true },
       _count: { category: true },
-      orderBy: { category: 'asc' },
     }),
   ]);
+
+  // 홈 화면 방문 횟수 집계 (관리자 대시보드에서 사용)
+  await prisma.siteStat.upsert({
+    where: { id: 1 },
+    update: { homeViews: { increment: 1 } },
+    create: { id: 1, homeViews: 1 },
+  });
+
+  const countMap = new Map(categoryCounts.map((c) => [c.category, c._count.category]));
 
   const sessionToken = cookies().get('admin_session')?.value;
   const isAdmin = await isValidSession(sessionToken);
@@ -39,6 +49,9 @@ export default async function Home() {
           </Link>
           {isAdmin ? (
             <>
+              <Link href="/admin/dashboard" className="text-sm text-gray-400 hover:text-gray-700">
+                관리자
+              </Link>
               <Link href="/admin/write" className="text-sm text-gray-400 hover:text-gray-700">
                 글쓰기
               </Link>
@@ -52,14 +65,9 @@ export default async function Home() {
         </div>
       </div>
 
-      <form action="/search" className="mb-10">
-        <input
-          type="text"
-          name="q"
-          placeholder="글 검색하기..."
-          className="w-full border rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200"
-        />
-      </form>
+      <div className="mb-10">
+        <SearchBox />
+      </div>
 
       <div className="grid grid-cols-[160px_1fr] gap-10">
         <aside>
@@ -70,13 +78,13 @@ export default async function Home() {
                 전체 ({posts.length})
               </Link>
             </li>
-            {categoryRows.map((row) => (
-              <li key={row.category}>
+            {categories.map((cat) => (
+              <li key={cat.id}>
                 <Link
-                  href={`/category/${encodeURIComponent(row.category)}`}
+                  href={`/category/${encodeURIComponent(cat.name)}`}
                   className="text-gray-500 hover:text-gray-800 hover:underline"
                 >
-                  {row.category} ({row._count.category})
+                  {cat.name} ({countMap.get(cat.name) || 0})
                 </Link>
               </li>
             ))}
