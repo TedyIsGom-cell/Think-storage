@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
+import { formatDateTime } from '@/lib/format';
 
 type Comment = {
   id: number;
   author: string;
   content: string;
   createdAt: string;
+  updatedAt: string;
 };
 
 export default function CommentSection({
@@ -23,6 +25,8 @@ export default function CommentSection({
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editContent, setEditContent] = useState('');
 
   async function loadComments() {
     const res = await fetch(`/api/posts/${postId}/comments`);
@@ -71,6 +75,24 @@ export default function CommentSection({
     }
   }
 
+  function startEdit(comment: Comment) {
+    setEditingId(comment.id);
+    setEditContent(comment.content);
+  }
+
+  async function submitEdit(commentId: number) {
+    if (!editContent.trim()) return;
+    const res = await fetch(`/api/comments/${commentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: editContent }),
+    });
+    if (res.ok) {
+      setEditingId(null);
+      loadComments();
+    }
+  }
+
   return (
     <section className="mt-16">
       <h2 className="text-lg font-semibold mb-4">
@@ -88,21 +110,54 @@ export default function CommentSection({
               <span className="font-medium text-sm">{comment.author}</span>
               <div className="flex items-center gap-3">
                 <span className="text-xs text-gray-400">
-                  {new Date(comment.createdAt).toLocaleDateString('ko-KR')}
+                  {formatDateTime(comment.createdAt)}
                 </span>
                 {isAdmin && (
-                  <button
-                    onClick={() => handleDelete(comment.id)}
-                    className="text-xs text-red-400 hover:text-red-600"
-                  >
-                    삭제
-                  </button>
+                  <>
+                    <button
+                      onClick={() => startEdit(comment)}
+                      className="text-xs text-gray-400 hover:text-gray-700"
+                    >
+                      수정
+                    </button>
+                    <button
+                      onClick={() => handleDelete(comment.id)}
+                      className="text-xs text-red-400 hover:text-red-600"
+                    >
+                      삭제
+                    </button>
+                  </>
                 )}
               </div>
             </div>
-            <p className="text-sm text-gray-700 mt-1 whitespace-pre-wrap">
-              {comment.content}
-            </p>
+
+            {editingId === comment.id ? (
+              <div className="mt-2 space-y-2">
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="w-full border rounded px-2 py-1 text-sm h-20"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => submitEdit(comment.id)}
+                    className="text-xs bg-black text-white rounded px-3 py-1"
+                  >
+                    저장
+                  </button>
+                  <button
+                    onClick={() => setEditingId(null)}
+                    className="text-xs text-gray-400"
+                  >
+                    취소
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-700 mt-1 whitespace-pre-wrap">
+                {comment.content}
+              </p>
+            )}
           </div>
         ))}
       </div>

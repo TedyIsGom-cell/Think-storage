@@ -3,8 +3,10 @@ import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { isValidSession } from '@/lib/auth';
+import { formatDateTime } from '@/lib/format';
 import LikeButton from './LikeButton';
 import CommentSection from './CommentSection';
+import LogoutButton from '../../components/LogoutButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,12 +32,27 @@ export default async function PostPage({
 
   return (
     <main className="max-w-2xl mx-auto px-6 py-16">
-      <Link href="/" className="text-sm text-gray-400 hover:text-gray-700">
-        ← 목록으로
-      </Link>
-      <h1 className="text-3xl font-bold mt-6 mb-2">{post.title}</h1>
+      <div className="flex items-center justify-between">
+        <Link href="/" className="text-sm text-gray-400 hover:text-gray-700">
+          ← 목록으로
+        </Link>
+        {isAdmin && (
+          <div className="flex items-center gap-4">
+            <Link
+              href={`/admin/edit/${post.id}`}
+              className="text-sm text-gray-400 hover:text-gray-700"
+            >
+              수정
+            </Link>
+            <LogoutButton />
+          </div>
+        )}
+      </div>
+
+      <p className="text-xs text-gray-400 mt-6">{post.category}</p>
+      <h1 className="text-3xl font-bold mt-1 mb-2">{post.title}</h1>
       <div className="flex items-center gap-3 text-sm text-gray-500 mb-8">
-        <span>{new Date(post.createdAt).toLocaleDateString('ko-KR')}</span>
+        <span>{formatDateTime(post.createdAt)}</span>
         <span>·</span>
         <span>조회 {updated.viewCount}</span>
       </div>

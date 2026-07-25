@@ -1,10 +1,14 @@
 import { prisma } from '@/lib/db';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
+import { isValidSession } from '@/lib/auth';
+import { formatDateTime } from '@/lib/format';
+import LogoutButton from './components/LogoutButton';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const [posts, popularPosts] = await Promise.all([
+  const [posts, popularPosts, categoryRows] = await Promise.all([
     prisma.post.findMany({
       where: { published: true },
       orderBy: { createdAt: 'desc' },
@@ -14,18 +18,41 @@ export default async function Home() {
       orderBy: { viewCount: 'desc' },
       take: 3,
     }),
+    prisma.post.groupBy({
+      by: ['category'],
+      where: { published: true },
+      _count: { category: true },
+      orderBy: { category: 'asc' },
+    }),
   ]);
 
+  const sessionToken = cookies().get('admin_session')?.value;
+  const isAdmin = await isValidSession(sessionToken);
+
   return (
-    <main className="max-w-2xl mx-auto px-6 py-16">
+    <main className="max-w-4xl mx-auto px-6 py-16">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">내 글 모음</h1>
-        <Link href="/admin" className="text-sm text-gray-400 hover:text-gray-700">
-          관리자
-        </Link>
+        <h1 className="text-3xl font-bold">이산의 블로그</h1>
+        <div className="flex items-center gap-4">
+          <Link href="/changelog" className="text-sm text-gray-400 hover:text-gray-700">
+            업데이트 기록
+          </Link>
+          {isAdmin ? (
+            <>
+              <Link href="/admin/write" className="text-sm text-gray-400 hover:text-gray-700">
+                글쓰기
+              </Link>
+              <LogoutButton />
+            </>
+          ) : (
+            <Link href="/admin" className="text-sm text-gray-400 hover:text-gray-700">
+              관리자
+            </Link>
+          )}
+        </div>
       </div>
 
-      <form action="/search" className="mb-12">
+      <form action="/search" className="mb-10">
         <input
           type="text"
           name="q"
@@ -34,43 +61,69 @@ export default async function Home() {
         />
       </form>
 
-      {popularPosts.length > 0 && (
-        <div className="mb-14">
-          <h2 className="text-sm font-semibold text-gray-400 mb-3">인기 게시물</h2>
-          <div className="grid grid-cols-3 gap-3">
-            {popularPosts.map((post, i) => (
-              <Link
-                key={post.id}
-                href={`/posts/${post.slug}`}
-                className="border rounded-lg p-3 hover:border-gray-400 transition"
-              >
-                <span className="text-xs text-gray-400">#{i + 1}</span>
-                <p className="text-sm font-medium mt-1 line-clamp-2">{post.title}</p>
-                <p className="text-xs text-gray-400 mt-2">조회 {post.viewCount}</p>
+      <div className="grid grid-cols-[160px_1fr] gap-10">
+        <aside>
+          <h2 className="text-sm font-semibold text-gray-400 mb-3">카테고리</h2>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <Link href="/" className="text-gray-700 hover:underline">
+                전체 ({posts.length})
+              </Link>
+            </li>
+            {categoryRows.map((row) => (
+              <li key={row.category}>
+                <Link
+                  href={`/category/${encodeURIComponent(row.category)}`}
+                  className="text-gray-500 hover:text-gray-800 hover:underline"
+                >
+                  {row.category} ({row._count.category})
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </aside>
+
+        <div>
+          {popularPosts.length > 0 && (
+            <div className="mb-14">
+              <h2 className="text-sm font-semibold text-gray-400 mb-3">인기 게시물</h2>
+              <div className="grid grid-cols-3 gap-3">
+                {popularPosts.map((post, i) => (
+                  <Link
+                    key={post.id}
+                    href={`/posts/${post.slug}`}
+                    className="border rounded-lg p-3 hover:border-gray-400 transition"
+                  >
+                    <span className="text-xs text-gray-400">#{i + 1}</span>
+                    <p className="text-sm font-medium mt-1 line-clamp-2">{post.title}</p>
+                    <p className="text-xs text-gray-400 mt-2">조회 {post.viewCount}</p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-8">
+            {posts.map((post) => (
+              <Link key={post.id} href={`/posts/${post.slug}`} className="block group">
+                <p className="text-xs text-gray-400">{post.category}</p>
+                <h2 className="text-xl font-semibold group-hover:underline">
+                  {post.title}
+                </h2>
+                <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                  <span>{formatDateTime(post.createdAt)}</span>
+                  <span>·</span>
+                  <span>조회 {post.viewCount}</span>
+                  <span>·</span>
+                  <span>좋아요 {post.likeCount}</span>
+                </div>
               </Link>
             ))}
+            {posts.length === 0 && (
+              <p className="text-gray-500">아직 글이 없습니다. 관리자 페이지에서 첫 글을 써보세요.</p>
+            )}
           </div>
         </div>
-      )}
-
-      <div className="space-y-8">
-        {posts.map((post) => (
-          <Link key={post.id} href={`/posts/${post.slug}`} className="block group">
-            <h2 className="text-xl font-semibold group-hover:underline">
-              {post.title}
-            </h2>
-            <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-              <span>{new Date(post.createdAt).toLocaleDateString('ko-KR')}</span>
-              <span>·</span>
-              <span>조회 {post.viewCount}</span>
-              <span>·</span>
-              <span>좋아요 {post.likeCount}</span>
-            </div>
-          </Link>
-        ))}
-        {posts.length === 0 && (
-          <p className="text-gray-500">아직 글이 없습니다. 관리자 페이지에서 첫 글을 써보세요.</p>
-        )}
       </div>
     </main>
   );

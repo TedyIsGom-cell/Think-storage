@@ -11,6 +11,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       author: true,
       content: true,
       createdAt: true,
+      updatedAt: true,
       // password는 절대 클라이언트로 내려주지 않습니다.
     },
   });
@@ -39,6 +40,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       author: true,
       content: true,
       createdAt: true,
+      updatedAt: true,
     },
   });
 

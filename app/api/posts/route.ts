@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
   }
 
-  const { title, content } = await req.json();
+  const { title, content, category } = await req.json();
   if (!title || !content) {
     return NextResponse.json({ error: '제목과 내용을 입력해주세요.' }, { status: 400 });
   }
@@ -40,6 +40,7 @@ export async function POST(req: Request) {
     data: {
       title,
       content,
+      category: category?.trim() || '일반',
       slug: makeSlug(title),
     },
   });

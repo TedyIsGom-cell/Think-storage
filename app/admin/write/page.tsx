@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 export default function WritePost() {
   const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
   const [content, setContent] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -18,7 +19,7 @@ export default function WritePost() {
     const res = await fetch('/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, content }),
+      body: JSON.stringify({ title, content, category }),
     });
 
     setSaving(false);
@@ -39,6 +40,12 @@ export default function WritePost() {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="제목"
           className="w-full border rounded px-3 py-2 text-lg"
+        />
+        <input
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          placeholder="카테고리 (예: 에세이, 소설 / 비워두면 '일반')"
+          className="w-full border rounded px-3 py-2 text-sm"
         />
         <textarea
           value={content}
