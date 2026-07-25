@@ -6,6 +6,10 @@ export type ChangelogEntry = {
 export const changelog: ChangelogEntry[] = [
   {
     date: '2026-07-25',
+    description: '글 올린 날짜 옆에 2007년 1월 21일 기준 날짜 수(예: 7126일)를 표시',
+  },
+  {
+    date: '2026-07-25',
     description:
       '관리자 대시보드 추가(방문자 수/조회수/좋아요/댓글 수 통계, 카테고리 추가·이름변경·삭제 관리), 브라우저 탭 제목을 "이산의 블로그"로 변경, 검색창에 추천 검색어(자동완성) 기능 추가',
   },

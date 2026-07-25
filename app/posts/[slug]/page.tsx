@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { isValidSession } from '@/lib/auth';
-import { formatDateTime } from '@/lib/format';
+import { formatDateTime, daysSinceBase } from '@/lib/format';
 import LikeButton from './LikeButton';
 import CommentSection from './CommentSection';
 import LogoutButton from '../../components/LogoutButton';
@@ -59,6 +59,7 @@ export default async function PostPage({
       <h1 className="text-3xl font-bold mt-1 mb-2">{post.title}</h1>
       <div className="flex items-center gap-3 text-sm text-gray-500 mb-8">
         <span>{formatDateTime(post.createdAt)}</span>
+        <span className="text-gray-400">({daysSinceBase(post.createdAt)}일)</span>
         <span>·</span>
         <span>조회 {updated.viewCount}</span>
       </div>

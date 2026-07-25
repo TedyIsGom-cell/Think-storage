@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { isValidSession } from '@/lib/auth';
-import { formatDateTime } from '@/lib/format';
+import { formatDateTime, daysSinceBase } from '@/lib/format';
 import LogoutButton from './components/LogoutButton';
 import SearchBox from './components/SearchBox';
 
@@ -120,6 +120,7 @@ export default async function Home() {
                 </h2>
                 <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
                   <span>{formatDateTime(post.createdAt)}</span>
+                  <span className="text-gray-400">({daysSinceBase(post.createdAt)}일)</span>
                   <span>·</span>
                   <span>조회 {post.viewCount}</span>
                   <span>·</span>

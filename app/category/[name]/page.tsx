@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db';
 import Link from 'next/link';
-import { formatDateTime } from '@/lib/format';
+import { formatDateTime, daysSinceBase } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,7 +40,8 @@ export default async function CategoryPage({
               {post.title}
             </h2>
             <p className="text-sm text-gray-500 mt-1">
-              {formatDateTime(post.createdAt)}
+              {formatDateTime(post.createdAt)}{' '}
+              <span className="text-gray-400">({daysSinceBase(post.createdAt)}일)</span>
             </p>
           </Link>
         ))}
