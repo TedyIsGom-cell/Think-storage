@@ -31,7 +31,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     data: {
       postId: Number(params.id),
       author: author.trim(),
-      password: hashCommentPassword(password),
+      password: await hashCommentPassword(password),
       content: content.trim(),
     },
     select: {

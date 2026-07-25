@@ -1,23 +1,42 @@
-import crypto from 'crypto';
-
-// .env 파일의 ADMIN_SECRET 값을 이용해 세션 토큰을 만들고 검증합니다.
-// (ADMIN_PASSWORD는 로그인할 때 입력하는 비밀번호, ADMIN_SECRET은 내부적으로
-// 로그인 상태를 안전하게 유지하기 위한 별도의 비밀 값입니다.)
+// Edge Runtime(미들웨어)에서도 동작해야 해서 Node.js의 'crypto' 모듈 대신
+// 표준 Web Crypto API(crypto.subtle)를 사용합니다.
 
 const SECRET = process.env.ADMIN_SECRET || 'please-change-this-secret';
 
-export function createSessionToken(): string {
-  return crypto.createHmac('sha256', SECRET).update('admin-session').digest('hex');
+function toHex(buffer: ArrayBuffer): string {
+  return Array.from(new Uint8Array(buffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
-export function isValidSession(token: string | undefined | null): boolean {
+async function hmacSha256(message: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(message));
+  return toHex(signature);
+}
+
+export async function createSessionToken(): Promise<string> {
+  return hmacSha256('admin-session');
+}
+
+export async function isValidSession(token: string | undefined | null): Promise<boolean> {
   if (!token) return false;
-  return token === createSessionToken();
+  const expected = await createSessionToken();
+  return token === expected;
 }
 
 // 게스트 댓글 비밀번호는 원문을 저장하지 않고 해시로 저장합니다.
-export function hashCommentPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
+export async function hashCommentPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const digest = await crypto.subtle.digest('SHA-256', encoder.encode(password));
+  return toHex(digest);
 }
 
 export function getSessionTokenFromRequest(req: Request): string | undefined {

@@ -10,7 +10,7 @@ function getTokenFromRequest(req: Request): string | undefined {
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   const token = getTokenFromRequest(req);
-  if (!isValidSession(token)) {
+  if (!(await isValidSession(token))) {
     return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
   }
 
@@ -25,7 +25,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const token = getTokenFromRequest(req);
-  if (!isValidSession(token)) {
+  if (!(await isValidSession(token))) {
     return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
   }
 

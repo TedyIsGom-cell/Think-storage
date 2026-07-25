@@ -5,7 +5,7 @@ export async function POST(req: Request) {
   const { password } = await req.json();
 
   if (password && password === process.env.ADMIN_PASSWORD) {
-    const token = createSessionToken();
+    const token = await createSessionToken();
     const res = NextResponse.json({ success: true });
     res.cookies.set('admin_session', token, {
       httpOnly: true,

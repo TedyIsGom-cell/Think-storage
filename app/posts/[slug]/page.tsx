@@ -26,7 +26,7 @@ export default async function PostPage({
   });
 
   const sessionToken = cookies().get('admin_session')?.value;
-  const isAdmin = isValidSession(sessionToken);
+  const isAdmin = await isValidSession(sessionToken);
 
   return (
     <main className="max-w-2xl mx-auto px-6 py-16">
