@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import { isValidSession } from '@/lib/auth';
 import { formatDateTime, daysSinceBase } from '@/lib/format';
 import LogoutButton from './components/LogoutButton';
+import NotificationBell from './components/NotificationBell';
 import SearchBox from './components/SearchBox';
 
 export const dynamic = 'force-dynamic';
@@ -14,6 +15,7 @@ export default async function Home() {
     prisma.post.findMany({
       where: { published: true },
       orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { comments: true } } },
     }),
     prisma.post.findMany({
       where: { published: true },
@@ -50,6 +52,7 @@ export default async function Home() {
           </Link>
           {isAdmin ? (
             <>
+              <NotificationBell />
               <Link href="/admin/dashboard" className="text-sm text-gray-400 hover:text-gray-700">
                 관리자
               </Link>
@@ -142,6 +145,8 @@ export default async function Home() {
                   <span>조회 {post.viewCount}</span>
                   <span>·</span>
                   <span>좋아요 {post.likeCount}</span>
+                  <span>·</span>
+                  <span>댓글 {post._count.comments}</span>
                 </div>
               </Link>
             ))}

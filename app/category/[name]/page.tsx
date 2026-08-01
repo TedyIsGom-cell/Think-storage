@@ -14,6 +14,7 @@ export default async function CategoryPage({
   const posts = await prisma.post.findMany({
     where: { published: true, category },
     orderBy: { createdAt: 'desc' },
+    include: { _count: { select: { comments: true } } },
   });
 
   return (
@@ -42,6 +43,7 @@ export default async function CategoryPage({
             <p className="text-sm text-gray-500 mt-1">
               {formatDateTime(post.createdAt)}{' '}
               <span className="text-gray-400">({daysSinceBase(post.createdAt)}일)</span>
+              {' · '}댓글 {post._count.comments}
             </p>
           </Link>
         ))}

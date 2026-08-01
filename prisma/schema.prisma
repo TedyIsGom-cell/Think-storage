@@ -17,8 +17,9 @@ model Category {
 }
 
 model SiteStat {
-  id        Int @id @default(1)
-  homeViews Int @default(0)
+  id                Int       @id @default(1)
+  homeViews         Int       @default(0)
+  lastSeenCommentAt DateTime?
 }
 
 model Post {

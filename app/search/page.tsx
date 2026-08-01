@@ -21,6 +21,7 @@ export default async function SearchPage({
           ],
         },
         orderBy: { createdAt: 'desc' },
+        include: { _count: { select: { comments: true } } },
       })
     : [];
 
@@ -47,6 +48,7 @@ export default async function SearchPage({
             <p className="text-sm text-gray-500 mt-1 line-clamp-2">
               {post.content}
             </p>
+            <p className="text-xs text-gray-400 mt-1">댓글 {post._count.comments}</p>
           </Link>
         ))}
         {q && posts.length === 0 && (

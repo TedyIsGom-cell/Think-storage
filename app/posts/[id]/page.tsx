@@ -7,6 +7,7 @@ import { formatDateTime, daysSinceBase } from '@/lib/format';
 import LikeButton from './LikeButton';
 import CommentSection from './CommentSection';
 import LogoutButton from '../../components/LogoutButton';
+import NotificationBell from '../../components/NotificationBell';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,6 +44,7 @@ export default async function PostPage({
         </Link>
         {isAdmin && (
           <div className="flex items-center gap-4">
+            <NotificationBell />
             <Link
               href="/admin/dashboard"
               className="text-sm text-gray-400 hover:text-gray-700"

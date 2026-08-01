@@ -6,6 +6,10 @@ export type ChangelogEntry = {
 export const changelog: ChangelogEntry[] = [
   {
     date: '2026-07-25',
+    description: '글 목록에 댓글 수 표시 추가, 관리자용 새 댓글 알림(🔔) 기능 추가 (작성자/내용 확인 가능)',
+  },
+  {
+    date: '2026-07-25',
     description: '모바일 화면에서 카테고리/인기 게시물 레이아웃이 깨지는 문제 수정 (좁은 화면에서는 세로로 쌓이게 반응형 처리)',
   },
   {
