@@ -8,6 +8,7 @@ import LikeButton from './LikeButton';
 import CommentSection from './CommentSection';
 import LogoutButton from '../../components/LogoutButton';
 import NotificationBell from '../../components/NotificationBell';
+import PostContent from '../../components/PostContent';
 
 export const dynamic = 'force-dynamic';
 
@@ -71,8 +72,8 @@ export default async function PostPage({
         <span>조회 {updated.viewCount}</span>
       </div>
 
-      <article className="whitespace-pre-wrap leading-relaxed text-[17px] mb-10">
-        {post.content}
+      <article className="mb-10">
+        <PostContent content={post.content} />
       </article>
 
       <LikeButton postId={post.id} initialCount={post.likeCount} />

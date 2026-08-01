@@ -6,6 +6,14 @@ export type ChangelogEntry = {
 export const changelog: ChangelogEntry[] = [
   {
     date: '2026-07-25',
+    description: '글쓰기/수정 화면에 "사진 첨부" 버튼 추가 (컴퓨터/휴대폰에 있는 사진을 직접 올려서 삽입 가능, Vercel Blob 저장소 사용)',
+  },
+  {
+    date: '2026-07-25',
+    description: '글 안에 사진(![](이미지주소))과 유튜브 영상(링크 단독 입력) 삽입 기능 추가',
+  },
+  {
+    date: '2026-07-25',
     description: '글 목록에 댓글 수 표시 추가, 관리자용 새 댓글 알림(🔔) 기능 추가 (작성자/내용 확인 가능)',
   },
   {

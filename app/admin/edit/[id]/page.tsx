@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, useRef, FormEvent, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function EditPost({ params }: { params: { id: string } }) {
@@ -10,8 +10,10 @@ export default function EditPost({ params }: { params: { id: string } }) {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     fetch('/api/categories')
@@ -29,6 +31,43 @@ export default function EditPost({ params }: { params: { id: string } }) {
         setLoading(false);
       });
   }, [params.id]);
+
+  function insertAtCursor(text: string) {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      setContent((prev) => prev + text);
+      return;
+    }
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    setContent((prev) => prev.slice(0, start) + text + prev.slice(end));
+    requestAnimationFrame(() => {
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = start + text.length;
+    });
+  }
+
+  async function handleImageSelect(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setError('');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch('/api/upload', { method: 'POST', body: formData });
+    setUploading(false);
+    e.target.value = '';
+
+    if (res.ok) {
+      const data = await res.json();
+      insertAtCursor(`\n![](${data.url})\n`);
+    } else {
+      setError('사진 업로드에 실패했습니다.');
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -88,12 +127,33 @@ export default function EditPost({ params }: { params: { id: string } }) {
             <option key={name} value={name} />
           ))}
         </datalist>
+
+        <div className="flex items-center gap-3">
+          <label className="text-sm border rounded-full px-4 py-1.5 text-gray-600 hover:bg-gray-50 cursor-pointer">
+            {uploading ? '업로드 중...' : '📎 사진 첨부'}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageSelect}
+              disabled={uploading}
+              className="hidden"
+            />
+          </label>
+          <span className="text-xs text-gray-400">
+            커서 위치에 사진이 자동으로 삽입돼요
+          </span>
+        </div>
+
         <textarea
+          ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="내용을 입력하세요..."
           className="w-full border rounded px-3 py-2 h-96"
         />
+        <p className="text-xs text-gray-400">
+          유튜브는 링크 자체를 <strong>한 줄에 단독으로</strong> 넣으면 자동으로 삽입돼요.
+        </p>
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <div className="flex items-center justify-between">
           <button
