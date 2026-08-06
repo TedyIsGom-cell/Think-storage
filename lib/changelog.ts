@@ -6,6 +6,10 @@ export type ChangelogEntry = {
 export const changelog: ChangelogEntry[] = [
   {
     date: '2026-08-06',
+    description: '인스타용 이미지 여백을 한 번 더 크게 늘림(약 17.6%)해서 미리보기 잘림 문제 추가 보완',
+  },
+  {
+    date: '2026-08-06',
     description: '인스타용 이미지 표지에서 "이산의 블로그" 워터마크 텍스트 제거',
   },
   {

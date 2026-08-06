@@ -3,17 +3,18 @@
 import { useState, useRef } from 'react';
 
 const WIDTH = 1080;
-const MARGIN = 130;
+const MARGIN = 190;
 const MAX_WIDTH = WIDTH - MARGIN * 2;
-const BODY_FONT_SIZE = 46;
-const BODY_LINE_HEIGHT = 66;
+const BODY_FONT_SIZE = 42;
+const BODY_LINE_HEIGHT = 62;
 const FONT_FAMILY = "'Apple SD Gothic Neo', 'Malgun Gothic', -apple-system, sans-serif";
 
-type Format = 'square' | 'portrait';
+type Format = 'square' | 'portrait' | 'story';
 
 const HEIGHTS: Record<Format, number> = {
   square: 1080,
   portrait: 1350,
+  story: 1920,
 };
 
 type Segment = { type: 'text'; content: string } | { type: 'image'; url: string };
@@ -121,12 +122,12 @@ function drawCover(
 ) {
   fillBackground(ctx, height);
 
-  ctx.font = `bold 68px ${FONT_FAMILY}`;
+  ctx.font = `bold 60px ${FONT_FAMILY}`;
   const titleLines = wrapText(ctx, title, MAX_WIDTH).slice(0, 8);
 
   const CATEGORY_H = 60;
   const GAP_1 = 40;
-  const TITLE_LINE_H = 84;
+  const TITLE_LINE_H = 76;
   const GAP_2 = 60;
   const DATE_H = 40;
 
@@ -143,7 +144,7 @@ function drawCover(
   y += GAP_1;
 
   ctx.fillStyle = '#111827';
-  ctx.font = `bold 68px ${FONT_FAMILY}`;
+  ctx.font = `bold 60px ${FONT_FAMILY}`;
   titleLines.forEach((line) => {
     y += TITLE_LINE_H;
     ctx.fillText(line, MARGIN, y);
@@ -173,7 +174,7 @@ function drawTextPage(
 
   ctx.fillStyle = '#111827';
   ctx.font = `${BODY_FONT_SIZE}px ${FONT_FAMILY}`;
-  let y = MARGIN + 130;
+  let y = MARGIN + 100;
   lines.forEach((line) => {
     ctx.fillText(line, MARGIN, y);
     y += BODY_LINE_HEIGHT;
@@ -256,7 +257,7 @@ export default function InstagramExport({
         );
         if (allLines.length === 0) continue;
 
-        const availableHeight = height - MARGIN * 2 - 90;
+        const availableHeight = height - MARGIN * 2 - 20;
         const linesPerPage = Math.max(1, Math.floor(availableHeight / BODY_LINE_HEIGHT));
 
         const pages: string[][] = [];
