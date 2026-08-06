@@ -6,6 +6,14 @@ export type ChangelogEntry = {
 export const changelog: ChangelogEntry[] = [
   {
     date: '2026-07-25',
+    description: '인스타용 이미지 만들기에 세로형(1080×1350) 크기 옵션 추가',
+  },
+  {
+    date: '2026-07-25',
+    description: '글 상세 페이지에 "인스타용 이미지로 만들기" 기능 추가 (글 내용을 1080x1080 정사각형 이미지 여러 장으로 나눠서 다운로드)',
+  },
+  {
+    date: '2026-07-25',
     description: '글쓰기/수정 화면에 "사진 첨부" 버튼 추가 (컴퓨터/휴대폰에 있는 사진을 직접 올려서 삽입 가능, Vercel Blob 저장소 사용)',
   },
   {

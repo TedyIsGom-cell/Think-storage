@@ -9,6 +9,7 @@ import CommentSection from './CommentSection';
 import LogoutButton from '../../components/LogoutButton';
 import NotificationBell from '../../components/NotificationBell';
 import PostContent from '../../components/PostContent';
+import InstagramExport from '../../components/InstagramExport';
 
 export const dynamic = 'force-dynamic';
 
@@ -77,6 +78,15 @@ export default async function PostPage({
       </article>
 
       <LikeButton postId={post.id} initialCount={post.likeCount} />
+
+      <div className="mt-8">
+        <InstagramExport
+          title={post.title}
+          category={post.category}
+          createdAt={post.createdAt.toISOString()}
+          content={post.content}
+        />
+      </div>
 
       <CommentSection postId={post.id} isAdmin={isAdmin} />
     </main>
