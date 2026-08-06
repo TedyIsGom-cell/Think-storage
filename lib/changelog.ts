@@ -6,6 +6,10 @@ export type ChangelogEntry = {
 export const changelog: ChangelogEntry[] = [
   {
     date: '2026-08-06',
+    description: '인스타용 이미지 표지에서 "이산의 블로그" 워터마크 텍스트 제거',
+  },
+  {
+    date: '2026-08-06',
     description: '인스타용 이미지 여백을 넉넉하게 늘리고 표지 슬라이드를 정중앙에 배치해서, 인스타그램 미리보기에서 글자가 잘리는 문제 방지',
   },
   {

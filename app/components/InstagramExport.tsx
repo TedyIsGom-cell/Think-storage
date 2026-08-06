@@ -129,12 +129,9 @@ function drawCover(
   const TITLE_LINE_H = 84;
   const GAP_2 = 60;
   const DATE_H = 40;
-  const GAP_3 = 50;
-  const WATERMARK_H = 36;
 
   const titleBlockHeight = titleLines.length * TITLE_LINE_H;
-  const totalHeight =
-    CATEGORY_H + GAP_1 + titleBlockHeight + GAP_2 + DATE_H + GAP_3 + WATERMARK_H;
+  const totalHeight = CATEGORY_H + GAP_1 + titleBlockHeight + GAP_2 + DATE_H;
 
   // 어떤 비율로 잘려도 안전하도록, 전체 내용을 캔버스 정중앙에 배치합니다.
   let y = Math.max(MARGIN, (height - totalHeight) / 2);
@@ -157,12 +154,6 @@ function drawCover(
   ctx.font = `30px ${FONT_FAMILY}`;
   y += DATE_H;
   ctx.fillText(dateLabel, MARGIN, y);
-  y += GAP_3;
-
-  ctx.fillStyle = '#d1d5db';
-  ctx.font = `28px ${FONT_FAMILY}`;
-  y += WATERMARK_H;
-  ctx.fillText('이산의 블로그', MARGIN, y);
 }
 
 function drawTextPage(
