@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 
 const WIDTH = 1080;
-const MARGIN = 90;
+const MARGIN = 130;
 const MAX_WIDTH = WIDTH - MARGIN * 2;
 const BODY_FONT_SIZE = 46;
 const BODY_LINE_HEIGHT = 66;
@@ -121,26 +121,48 @@ function drawCover(
 ) {
   fillBackground(ctx, height);
 
+  ctx.font = `bold 68px ${FONT_FAMILY}`;
+  const titleLines = wrapText(ctx, title, MAX_WIDTH).slice(0, 8);
+
+  const CATEGORY_H = 60;
+  const GAP_1 = 40;
+  const TITLE_LINE_H = 84;
+  const GAP_2 = 60;
+  const DATE_H = 40;
+  const GAP_3 = 50;
+  const WATERMARK_H = 36;
+
+  const titleBlockHeight = titleLines.length * TITLE_LINE_H;
+  const totalHeight =
+    CATEGORY_H + GAP_1 + titleBlockHeight + GAP_2 + DATE_H + GAP_3 + WATERMARK_H;
+
+  // 어떤 비율로 잘려도 안전하도록, 전체 내용을 캔버스 정중앙에 배치합니다.
+  let y = Math.max(MARGIN, (height - totalHeight) / 2);
+
   ctx.fillStyle = '#9ca3af';
   ctx.font = `32px ${FONT_FAMILY}`;
-  ctx.fillText(category, MARGIN, 220);
+  y += CATEGORY_H;
+  ctx.fillText(category, MARGIN, y);
+  y += GAP_1;
 
   ctx.fillStyle = '#111827';
   ctx.font = `bold 68px ${FONT_FAMILY}`;
-  const titleLines = wrapText(ctx, title, MAX_WIDTH);
-  let y = 320;
-  titleLines.slice(0, 8).forEach((line) => {
+  titleLines.forEach((line) => {
+    y += TITLE_LINE_H;
     ctx.fillText(line, MARGIN, y);
-    y += 84;
   });
+  y += GAP_2;
 
   ctx.fillStyle = '#9ca3af';
   ctx.font = `30px ${FONT_FAMILY}`;
-  ctx.fillText(dateLabel, MARGIN, height - 140);
+  y += DATE_H;
+  ctx.fillText(dateLabel, MARGIN, y);
+  y += GAP_3;
 
   ctx.fillStyle = '#d1d5db';
   ctx.font = `28px ${FONT_FAMILY}`;
-  ctx.fillText('이산의 블로그', MARGIN, height - 90);
+  y += WATERMARK_H;
+  ctx.fillText('이산의 블로그', MARGIN, y);
 }
 
 function drawTextPage(
@@ -156,11 +178,11 @@ function drawTextPage(
   ctx.fillStyle = '#9ca3af';
   ctx.font = `28px ${FONT_FAMILY}`;
   const shortTitle = title.length > 20 ? title.slice(0, 20) + '…' : title;
-  ctx.fillText(shortTitle, MARGIN, 100);
+  ctx.fillText(shortTitle, MARGIN, MARGIN);
 
   ctx.fillStyle = '#111827';
   ctx.font = `${BODY_FONT_SIZE}px ${FONT_FAMILY}`;
-  let y = 220;
+  let y = MARGIN + 130;
   lines.forEach((line) => {
     ctx.fillText(line, MARGIN, y);
     y += BODY_LINE_HEIGHT;
@@ -168,7 +190,7 @@ function drawTextPage(
 
   ctx.fillStyle = '#d1d5db';
   ctx.font = `28px ${FONT_FAMILY}`;
-  ctx.fillText(`${pageNum} / ${totalPages}`, WIDTH - MARGIN - 90, height - 90);
+  ctx.fillText(`${pageNum} / ${totalPages}`, WIDTH - MARGIN - 90, height - MARGIN + 40);
 }
 
 function drawImagePage(ctx: CanvasRenderingContext2D, height: number, img: HTMLImageElement) {
@@ -243,7 +265,7 @@ export default function InstagramExport({
         );
         if (allLines.length === 0) continue;
 
-        const availableHeight = height - 220 - 140;
+        const availableHeight = height - MARGIN * 2 - 90;
         const linesPerPage = Math.max(1, Math.floor(availableHeight / BODY_LINE_HEIGHT));
 
         const pages: string[][] = [];
