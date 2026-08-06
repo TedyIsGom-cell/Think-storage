@@ -12,6 +12,8 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       content: true,
       createdAt: true,
       updatedAt: true,
+      likeCount: true,
+      parentId: true,
       // password는 절대 클라이언트로 내려주지 않습니다.
     },
   });
@@ -19,7 +21,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 }
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const { author, password, content } = await req.json();
+  const { author, password, content, parentId } = await req.json();
 
   if (!author?.trim() || !password?.trim() || !content?.trim()) {
     return NextResponse.json(
@@ -31,6 +33,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const comment = await prisma.comment.create({
     data: {
       postId: Number(params.id),
+      parentId: parentId ? Number(parentId) : null,
       author: author.trim(),
       password: await hashCommentPassword(password),
       content: content.trim(),
@@ -41,6 +44,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       content: true,
       createdAt: true,
       updatedAt: true,
+      likeCount: true,
+      parentId: true,
     },
   });
 

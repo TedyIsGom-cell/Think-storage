@@ -6,6 +6,14 @@ export type ChangelogEntry = {
 export const changelog: ChangelogEntry[] = [
   {
     date: '2026-07-25',
+    description: '인스타용 이미지 만들기에서 글 속 사진을 실제 이미지로 캡처해서 넣도록 개선 (기존엔 텍스트로만 표시됨)',
+  },
+  {
+    date: '2026-07-25',
+    description: '마크다운 문법 지원(굵게/기울임/제목/인용/목록/링크), 다크 모드 추가, 댓글 좋아요 및 답글(대댓글) 기능 추가',
+  },
+  {
+    date: '2026-07-25',
     description: '인스타용 이미지 만들기에 세로형(1080×1350) 크기 옵션 추가',
   },
   {

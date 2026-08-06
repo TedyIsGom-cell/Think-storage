@@ -6,6 +6,7 @@ import { isValidSession } from '@/lib/auth';
 import { formatDateTime, daysSinceBase } from '@/lib/format';
 import LogoutButton from './components/LogoutButton';
 import NotificationBell from './components/NotificationBell';
+import DarkModeToggle from './components/DarkModeToggle';
 import SearchBox from './components/SearchBox';
 
 export const dynamic = 'force-dynamic';
@@ -47,6 +48,7 @@ export default async function Home() {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">이산의 블로그</h1>
         <div className="flex items-center gap-4">
+          <DarkModeToggle />
           <Link href="/changelog" className="text-sm text-gray-400 hover:text-gray-700">
             업데이트 기록
           </Link>

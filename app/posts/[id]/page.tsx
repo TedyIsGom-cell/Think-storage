@@ -8,6 +8,7 @@ import LikeButton from './LikeButton';
 import CommentSection from './CommentSection';
 import LogoutButton from '../../components/LogoutButton';
 import NotificationBell from '../../components/NotificationBell';
+import DarkModeToggle from '../../components/DarkModeToggle';
 import PostContent from '../../components/PostContent';
 import InstagramExport from '../../components/InstagramExport';
 
@@ -44,24 +45,27 @@ export default async function PostPage({
         <Link href="/" className="text-sm text-gray-400 hover:text-gray-700">
           ← 목록으로
         </Link>
-        {isAdmin && (
-          <div className="flex items-center gap-4">
-            <NotificationBell />
-            <Link
-              href="/admin/dashboard"
-              className="text-sm text-gray-400 hover:text-gray-700"
-            >
-              관리자
-            </Link>
-            <Link
-              href={`/admin/edit/${post.id}`}
-              className="text-sm text-gray-400 hover:text-gray-700"
-            >
-              수정
-            </Link>
-            <LogoutButton />
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          <DarkModeToggle />
+          {isAdmin && (
+            <>
+              <NotificationBell />
+              <Link
+                href="/admin/dashboard"
+                className="text-sm text-gray-400 hover:text-gray-700"
+              >
+                관리자
+              </Link>
+              <Link
+                href={`/admin/edit/${post.id}`}
+                className="text-sm text-gray-400 hover:text-gray-700"
+              >
+                수정
+              </Link>
+              <LogoutButton />
+            </>
+          )}
+        </div>
       </div>
 
       <p className="text-xs text-gray-400 mt-6">{post.category}</p>

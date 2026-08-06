@@ -125,7 +125,12 @@ export default function WritePost() {
           className="w-full border rounded px-3 py-2 h-96"
         />
         <p className="text-xs text-gray-400">
-          유튜브는 링크 자체를 <strong>한 줄에 단독으로</strong> 넣으면 자동으로 삽입돼요.
+          <strong>**굵게**</strong>, <em>*기울임*</em>, <code className="bg-gray-100 px-1 rounded">`코드`</code>,{' '}
+          <code className="bg-gray-100 px-1 rounded"># 제목</code>,{' '}
+          <code className="bg-gray-100 px-1 rounded">&gt; 인용</code>,{' '}
+          <code className="bg-gray-100 px-1 rounded">- 목록</code>,{' '}
+          <code className="bg-gray-100 px-1 rounded">[링크](주소)</code> 문법을 쓸 수 있어요.
+          유튜브는 링크를 한 줄에 단독으로 넣으면 자동 삽입돼요.
         </p>
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
